@@ -45,8 +45,8 @@ class SharedViewModelTest {
         every { repository.observePopularProducts() } returns flowOf(fakeProducts.filter { it.isPopular })
         every {
             repository.observeProductsByQueryAndCategory(
-                MockKMatcherScope.any(),
-                MockKMatcherScope.any()
+                any(),
+                any()
             )
         } returns flowOf(fakeProducts)
         coEvery { repository.refreshProducts() } returns Unit
@@ -141,12 +141,12 @@ class SharedViewModelTest {
     @Test
     fun `uiState emits updated query via Turbine`() = runTest {
         viewModel.uiState.test {
-            ReceiveTurbine.awaitItem()
+            awaitItem()
             viewModel.onEvent(ProductEvent.OnSearchQueryChanged("клавіа"))
             testDispatcher.scheduler.advanceUntilIdle()
-            val updated = ReceiveTurbine.awaitItem()
+            val updated = awaitItem()
             assertEquals("клавіа", updated.query)
-            ReceiveTurbine.cancelAndIgnoreRemainingEvents()
+            cancelAndIgnoreRemainingEvents()
         }
     }
 }
