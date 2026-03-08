@@ -1,4 +1,4 @@
-package com.org.labs.data.local
+package com.org.labss.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert
