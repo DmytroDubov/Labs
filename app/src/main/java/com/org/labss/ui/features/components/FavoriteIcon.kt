@@ -1,4 +1,4 @@
-package com.org.labs.ui.features.components
+package com.org.labss.ui.features.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -6,7 +6,7 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import com.org.labs.ui.theme.BlackPrimary
+import com.org.labss.ui.theme.BlackPrimary
 
 @Composable
 fun FavoriteIcon(

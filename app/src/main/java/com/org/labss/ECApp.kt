@@ -3,10 +3,10 @@ package com.org.labss
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.org.labs.di.AppModule
-import com.org.labs.ui.navigation.ECNavHost
-import com.org.labs.ui.theme.SportTheme
-import com.org.labs.ui.vm.SharedViewModel
+import com.org.labss.di.AppModule
+import com.org.labss.ui.navigation.ECNavHost
+import com.org.labss.ui.theme.LabssTheme
+import com.org.labss.ui.vm.SharedViewModel
 
 @Composable
 fun ECApp() {

@@ -3,7 +3,8 @@ package com.org.labss.ui.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.org.labs.domain.repository.ProductRepository
+import com.org.labss.domain.repository.ProductRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -31,6 +32,7 @@ class SharedViewModel(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeFilteredProducts() {
         viewModelScope.launch {
             combine(queryFlow, categoryFlow) { q, c -> q to c }

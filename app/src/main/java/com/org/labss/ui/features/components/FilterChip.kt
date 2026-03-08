@@ -1,4 +1,4 @@
-package com.org.labs.ui.features.components
+package com.org.labss.ui.features.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,9 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.org.labs.ui.theme.BlackPrimary
-import com.org.labs.ui.theme.LightGraySurface
-import com.org.labs.ui.theme.White
+import com.org.labss.ui.theme.BlackPrimary
+import com.org.labss.ui.theme.LightGraySurface
+import com.org.labss.ui.theme.White
 
 @Composable
 fun FilterChip(

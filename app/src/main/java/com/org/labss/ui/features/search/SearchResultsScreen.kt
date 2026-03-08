@@ -1,4 +1,4 @@
-package com.org.labs.ui.features.search
+package com.org.labss.ui.features.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,18 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.org.labs.domain.model.Product
-import com.org.labs.ui.features.components.CustomSearchBar
-import com.org.labs.ui.features.components.DynamicAddButton
-import com.org.labs.ui.features.components.FilterChip
-import com.org.labs.ui.features.components.ProductImage
-import com.org.labs.ui.theme.BlackPrimary
-import com.org.labs.ui.theme.LightGraySurface
-import com.org.labs.ui.theme.MediumGrayText
-import com.org.labs.ui.vm.ProductEvent
-import com.org.labs.ui.vm.ProductUiState
+import com.org.labss.domain.model.Product
+import com.org.labss.ui.features.components.CustomSearchBar
+import com.org.labss.ui.features.components.DynamicAddButton
+import com.org.labss.ui.features.components.FilterChip
+import com.org.labss.ui.features.components.ProductImage
+import com.org.labss.ui.vm.ProductEvent
+import com.org.labss.ui.vm.ProductUiState
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.navigationBarsPadding
+import com.org.labss.ui.theme.BlackPrimary
+import com.org.labss.ui.theme.LightGraySurface
+import com.org.labss.ui.theme.MediumGrayText
 
 @Composable
 fun SearchResultsScreen(

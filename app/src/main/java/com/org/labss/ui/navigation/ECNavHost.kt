@@ -9,10 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.org.labs.ui.features.home.HomeScreen
-import com.org.labs.ui.features.search.SearchResultsScreen
-import com.org.labs.ui.vm.ProductEvent
-import com.org.labs.ui.vm.SharedViewModel
+import com.org.labss.ui.features.home.HomeScreen
+import com.org.labss.ui.features.search.SearchResultsScreen
+import com.org.labss.ui.vm.ProductEvent
+import com.org.labss.ui.vm.SharedViewModel
 
 @Composable
 fun ECNavHost(viewModel: SharedViewModel) {

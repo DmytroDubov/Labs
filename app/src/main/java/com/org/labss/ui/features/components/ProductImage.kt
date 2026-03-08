@@ -1,4 +1,4 @@
-package com.org.labs.ui.features.components
+package com.org.labss.ui.features.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,8 +19,9 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
 import coil.compose.AsyncImagePainter
-import com.org.labs.ui.theme.LightGraySurface
-import com.org.labs.ui.theme.MediumGrayText
+import com.org.labss.ui.theme.LightGraySurface
+import com.org.labss.ui.theme.MediumGrayText
+
 
 @Composable
 fun ProductImage(

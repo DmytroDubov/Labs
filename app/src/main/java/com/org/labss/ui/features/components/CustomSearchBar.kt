@@ -1,4 +1,4 @@
-package com.org.labs.ui.features.components
+package com.org.labss.ui.features.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,9 +20,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.org.labs.ui.theme.BlackPrimary
-import com.org.labs.ui.theme.LightGraySurface
-import com.org.labs.ui.theme.MediumGrayText
+import com.org.labss.ui.theme.BlackPrimary
+import com.org.labss.ui.theme.LightGraySurface
+import com.org.labss.ui.theme.MediumGrayText
 
 @Composable
 fun CustomSearchBar(

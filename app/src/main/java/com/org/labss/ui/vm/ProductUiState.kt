@@ -1,6 +1,6 @@
 package com.org.labss.ui.vm
 
-import com.org.labs.domain.model.Product
+import com.org.labss.domain.model.Product
 
 data class ProductUiState(
     val query: String = "",

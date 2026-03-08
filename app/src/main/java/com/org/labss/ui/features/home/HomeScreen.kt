@@ -1,4 +1,4 @@
-package com.org.labs.ui.features.home
+package com.org.labss.ui.features.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,19 +11,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.org.labs.domain.model.Product
-import com.org.labs.ui.features.components.CategoryItem
-import com.org.labs.ui.features.components.CustomSearchBar
-import com.org.labs.ui.features.components.DynamicAddButton
-import com.org.labs.ui.features.components.ProductImage
-import com.org.labs.ui.features.components.FavoriteIcon
-import com.org.labs.ui.theme.BlackPrimary
-import com.org.labs.ui.theme.LightGraySurface
-import com.org.labs.ui.vm.ProductEvent
-import com.org.labs.ui.vm.ProductUiState
+import com.org.labss.domain.model.Product
+import com.org.labss.ui.features.components.CategoryItem
+import com.org.labss.ui.features.components.CustomSearchBar
+import com.org.labss.ui.features.components.DynamicAddButton
+import com.org.labss.ui.features.components.ProductImage
+import com.org.labss.ui.features.components.FavoriteIcon
+import com.org.labss.ui.vm.ProductEvent
+import com.org.labss.ui.vm.ProductUiState
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.ui.text.style.TextOverflow
+import com.org.labss.ui.theme.BlackPrimary
+import com.org.labss.ui.theme.LightGraySurface
 
 @Composable
 fun HomeScreen(

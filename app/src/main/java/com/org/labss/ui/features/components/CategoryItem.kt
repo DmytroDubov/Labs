@@ -1,5 +1,4 @@
-// File: app/src/main/java/com/org/labs/ui/features/components/CategoryItem.kt
-package com.org.labs.ui.features.components
+package com.org.labss.ui.features.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,9 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.org.labs.ui.theme.BlackPrimary
-import com.org.labs.ui.theme.LightGraySurface
-import com.org.labs.ui.theme.MediumGrayText
+import com.org.labss.ui.theme.BlackPrimary
+import com.org.labss.ui.theme.LightGraySurface
+import com.org.labss.ui.theme.MediumGrayText
+
 
 @Composable
 fun CategoryItem(
