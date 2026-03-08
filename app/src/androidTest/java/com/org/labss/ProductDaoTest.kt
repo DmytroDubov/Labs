@@ -3,6 +3,9 @@ package com.org.labss
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.org.labss.data.local.ECDatabase
+import com.org.labss.data.local.ProductDao
+import com.org.labss.data.local.ProductEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
