@@ -47,8 +47,8 @@ android {
             excludes += "/META-INF/INDEX.LIST"
             excludes += "/META-INF/DEPENDENCIES"
             excludes += "/META-INF/LICENSE"
-            excludes += "/META-INF/LICENSE.md" // <--- Додайте цей рядок
-            excludes += "/META-INF/LICENSE-notice.md" // <--- Рекомендую додати й цей про всяк випадок
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
             excludes += "/META-INF/NOTICE"
             excludes += "/META-INF/io.netty.versions.properties"
         }

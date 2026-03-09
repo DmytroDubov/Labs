@@ -14,5 +14,5 @@ interface ApiService {
     @GET("b/{binId}")
     suspend fun getProducts(
         @Path("binId") binId: String = DEFAULT_BIN_ID
-    ): ProductResponse // <--- ТУТ МАЄ БУТИ ПРОСТО ProductResponse (без List)
+    ): ProductResponse
 }

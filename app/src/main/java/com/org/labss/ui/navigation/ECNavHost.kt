@@ -24,6 +24,9 @@ fun ECNavHost(viewModel: SharedViewModel) {
         startDestination = Routes.Home.route
     ) {
         composable(Routes.Home.route) {
+            LaunchedEffect(Unit) {
+                viewModel.resetSearch()
+            }
             HomeScreen(
                 state = state,
                 onEvent = viewModel::onEvent,
@@ -44,9 +47,12 @@ fun ECNavHost(viewModel: SharedViewModel) {
             val categoryArg = backStackEntry.arguments?.getString("category").orEmpty()
             val category = categoryArg.ifBlank { null }
 
-            LaunchedEffect(query, category) {
-                viewModel.onEvent(ProductEvent.OnSearchQueryChanged(query))
-                viewModel.onEvent(ProductEvent.OnCategorySelected(category))
+            LaunchedEffect(Unit) {
+                if (!viewModel.isSearchInitialized) {
+                    viewModel.isSearchInitialized = true
+                    viewModel.onEvent(ProductEvent.OnSearchQueryChanged(query))
+                    viewModel.onEvent(ProductEvent.OnCategorySelected(category))
+                }
             }
 
             SearchResultsScreen(

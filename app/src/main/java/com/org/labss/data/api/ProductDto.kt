@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ProductDto(
     @SerializedName("id") val id: Int,
-    @SerializedName("title") val title: String, // Змінили "name" на "title"
+    @SerializedName("title") val title: String,
     @SerializedName("description") val description: String,
     @SerializedName("price") val price: Double,
     @SerializedName("imageUrl") val imageUrl: String,
