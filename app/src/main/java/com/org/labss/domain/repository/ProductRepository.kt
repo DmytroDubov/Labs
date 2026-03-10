@@ -29,4 +29,5 @@ interface ProductRepository {
     suspend fun deleteSearchQuery(query: String)
     suspend fun clearSearchHistory()
     suspend fun getRecentSearches(limit: Int = 10): List<SearchHistoryItem>
+    suspend fun syncSearchHistory()
 }

@@ -2,6 +2,7 @@ package com.org.labss.data.mapper
 
 import com.org.labss.data.api.CategoryDto
 import com.org.labss.data.api.ProductDto
+import com.org.labss.data.api.SearchHistoryDto
 import com.org.labss.data.local.CategoryEntity
 import com.org.labss.data.local.ProductEntity
 import com.org.labss.data.local.SearchHistoryEntity
@@ -83,3 +84,17 @@ fun SearchHistoryItem.toEntity(): SearchHistoryEntity = SearchHistoryEntity(
     timestamp = timestamp,
     resultCount = resultCount
 )
+
+fun SearchHistoryDto.toEntity(): SearchHistoryEntity = SearchHistoryEntity(
+    query = query,
+    timestamp = timestamp,
+    resultCount = resultCount
+)
+
+fun SearchHistoryEntity.toDto(): SearchHistoryDto = SearchHistoryDto(
+    id = id,
+    query = query,
+    timestamp = timestamp,
+    resultCount = resultCount
+)
+

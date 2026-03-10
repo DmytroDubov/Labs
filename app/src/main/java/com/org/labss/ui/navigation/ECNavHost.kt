@@ -20,11 +20,9 @@ fun ECNavHost(viewModel: SharedViewModel) {
     val navController = rememberNavController()
     val state by viewModel.uiState.collectAsState()
 
-    // Слідкуємо за поточним маршрутом
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStack?.destination?.route
 
-    // Коли повертаємось на Home — очищуємо пошук
     LaunchedEffect(currentRoute) {
         if (currentRoute == Routes.Home.route) {
             viewModel.onEvent(ProductEvent.OnSearchQueryChanged(""))
