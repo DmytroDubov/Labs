@@ -21,6 +21,8 @@ class SharedViewModel(
     init {
         observeFilteredProducts()
         observePopular()
+        observeCategories()
+        observeSearchHistory()
         loadInitial()
     }
 
@@ -53,6 +55,22 @@ class SharedViewModel(
         }
     }
 
+    private fun observeCategories() {
+        viewModelScope.launch {
+            repository.observeCategories().collect { list ->
+                _uiState.update { it.copy(categoryObjects = list) }
+            }
+        }
+    }
+
+    private fun observeSearchHistory() {
+        viewModelScope.launch {
+            repository.observeSearchHistory().collect { list ->
+                _uiState.update { it.copy(searchHistory = list) }
+            }
+        }
+    }
+
     fun onEvent(event: ProductEvent) {
         when (event) {
             is ProductEvent.OnSearchQueryChanged -> {
@@ -74,6 +92,17 @@ class SharedViewModel(
             }
             is ProductEvent.OnToggleFavorite -> {
                 viewModelScope.launch { repository.toggleFavorite(event.productId) }
+            }
+            is ProductEvent.OnSearchSubmitted -> {
+                viewModelScope.launch {
+                    repository.saveSearchQuery(event.query, event.resultCount)
+                }
+            }
+            is ProductEvent.OnDeleteSearchHistory -> {
+                viewModelScope.launch { repository.deleteSearchQuery(event.query) }
+            }
+            is ProductEvent.OnClearSearchHistory -> {
+                viewModelScope.launch { repository.clearSearchHistory() }
             }
         }
     }

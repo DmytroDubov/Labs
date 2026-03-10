@@ -47,8 +47,8 @@ android {
             excludes += "/META-INF/INDEX.LIST"
             excludes += "/META-INF/DEPENDENCIES"
             excludes += "/META-INF/LICENSE"
-            excludes += "/META-INF/LICENSE.md" // <--- Додайте цей рядок
-            excludes += "/META-INF/LICENSE-notice.md" // <--- Рекомендую додати й цей про всяк випадок
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
             excludes += "/META-INF/NOTICE"
             excludes += "/META-INF/io.netty.versions.properties"
         }
@@ -81,7 +81,6 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.firebase.appdistribution.gradle)
     ksp(libs.dagger.hilt.android.compiler)
 
     implementation(libs.androidx.room.runtime)
@@ -90,7 +89,6 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
-    // Unit Tests
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockk)

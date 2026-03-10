@@ -2,17 +2,25 @@ package com.org.labss.data.repository
 
 import android.util.Log
 import com.org.labss.data.api.ApiService
+import com.org.labss.data.local.CategoryDao
+import com.org.labss.data.local.CategoryEntity
 import com.org.labss.data.local.ProductDao
+import com.org.labss.data.local.SearchHistoryDao
+import com.org.labss.data.local.SearchHistoryEntity
 import com.org.labss.data.mapper.toDomain
 import com.org.labss.data.mapper.toEntity
+import com.org.labss.domain.model.Category
 import com.org.labss.domain.model.Product
+import com.org.labss.domain.model.SearchHistoryItem
 import com.org.labss.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class ProductRepositoryImpl(
     private val apiService: ApiService,
-    private val productDao: ProductDao
+    private val productDao: ProductDao,
+    private val categoryDao: CategoryDao,
+    private val searchHistoryDao: SearchHistoryDao
 ) : ProductRepository {
 
     override fun observeAllProducts(): Flow<List<Product>> =
@@ -44,6 +52,7 @@ class ProductRepositoryImpl(
                 )
             }
             productDao.insertAll(entities)
+            syncCategories()
         } catch (e: Exception) {
             Log.e("API_TEST", "Помилка завантаження даних: ${e.message}", e)
         }
@@ -74,4 +83,46 @@ class ProductRepositoryImpl(
     override suspend fun toggleFavorite(productId: Int) {
         productDao.toggleFavorite(productId)
     }
+
+    // ─── Categories ──────────────────────────────────────────────────────────
+
+    override fun observeCategories(): Flow<List<Category>> =
+        categoryDao.observeAllCategories().map { list -> list.map { it.toDomain() } }
+
+    override suspend fun syncCategories() {
+        val categoryNames = productDao.getAllCategories()
+        val entities = categoryNames.mapIndexed { index, name ->
+            CategoryEntity(id = index + 1, name = name)
+        }
+        categoryDao.clearAll()
+        categoryDao.insertAll(entities)
+    }
+
+    // ─── Search History ───────────────────────────────────────────────────────
+
+    override fun observeSearchHistory(): Flow<List<SearchHistoryItem>> =
+        searchHistoryDao.observeAll().map { list -> list.map { it.toDomain() } }
+
+    override suspend fun saveSearchQuery(query: String, resultCount: Int) {
+        if (query.isBlank()) return
+        searchHistoryDao.deleteByQuery(query)
+        searchHistoryDao.insert(
+            SearchHistoryEntity(
+                query = query.trim(),
+                timestamp = System.currentTimeMillis(),
+                resultCount = resultCount
+            )
+        )
+    }
+
+    override suspend fun deleteSearchQuery(query: String) {
+        searchHistoryDao.deleteByQuery(query)
+    }
+
+    override suspend fun clearSearchHistory() {
+        searchHistoryDao.clearAll()
+    }
+
+    override suspend fun getRecentSearches(limit: Int): List<SearchHistoryItem> =
+        searchHistoryDao.getRecent(limit).map { it.toDomain() }
 }
