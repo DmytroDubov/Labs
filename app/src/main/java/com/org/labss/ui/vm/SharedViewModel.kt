@@ -18,6 +18,9 @@ class SharedViewModel(
     private val queryFlow = MutableStateFlow("")
     private val categoryFlow = MutableStateFlow<String?>(null)
 
+    // true після першої ініціалізації SearchScreen з URL-аргументів
+    var isSearchInitialized: Boolean = false
+
     init {
         observeFilteredProducts()
         observePopular()
@@ -105,6 +108,13 @@ class SharedViewModel(
                 viewModelScope.launch { repository.clearSearchHistory() }
             }
         }
+    }
+
+    fun resetSearch() {
+        isSearchInitialized = false
+        queryFlow.value = ""
+        categoryFlow.value = null
+        _uiState.update { it.copy(query = "", selectedCategory = null) }
     }
 
     class Factory(
