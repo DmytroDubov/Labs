@@ -49,8 +49,13 @@ fun HomeScreen(
                 readOnly = false,
                 onClick = { onNavigateToSearch(state.query, state.selectedCategory) },
                 onSearchAction = { query ->
-                    onEvent(ProductEvent.OnSearchQueryChanged(query))
-                    onNavigateToSearch(query, state.selectedCategory)
+                    val effectiveQuery = query.ifBlank {
+                        state.popularProducts.firstOrNull()?.title
+                            ?: state.products.firstOrNull()?.title
+                            ?: "Капучино"
+                    }
+                    onEvent(ProductEvent.OnSearchQueryChanged(effectiveQuery))
+                    onNavigateToSearch(effectiveQuery, state.selectedCategory)
                 }
             )
         }

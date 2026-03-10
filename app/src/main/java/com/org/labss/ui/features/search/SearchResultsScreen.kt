@@ -47,8 +47,13 @@ fun SearchResultsScreen(
             value = state.query,
             onValueChange = { onEvent(ProductEvent.OnSearchQueryChanged(it)) },
             onSearchAction = { query ->
-                onEvent(ProductEvent.OnSearchQueryChanged(query))
-                onEvent(ProductEvent.OnSearchSubmitted(query, state.products.size))
+                val effectiveQuery = query.ifBlank {
+                    state.popularProducts.firstOrNull()?.title
+                        ?: state.products.firstOrNull()?.title
+                        ?: "Капучино"
+                }
+                onEvent(ProductEvent.OnSearchQueryChanged(effectiveQuery))
+                onEvent(ProductEvent.OnSearchSubmitted(effectiveQuery, state.products.size))
             }
         )
 
