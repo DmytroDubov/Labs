@@ -7,4 +7,7 @@ sealed interface ProductEvent {
     data class OnIncreaseQuantity(val productId: Int) : ProductEvent
     data class OnDecreaseQuantity(val productId: Int) : ProductEvent
     data class OnToggleFavorite(val productId: Int) : ProductEvent
+    data class OnSearchSubmitted(val query: String, val resultCount: Int = 0) : ProductEvent
+    data class OnDeleteSearchHistory(val query: String) : ProductEvent
+    object OnClearSearchHistory : ProductEvent
 }

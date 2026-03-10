@@ -3,8 +3,10 @@ package com.org.labss.di
 import android.content.Context
 import androidx.room.Room
 import com.org.labss.data.api.ApiService
+import com.org.labss.data.local.CategoryDao
 import com.org.labss.data.local.ProductDao
 import com.org.labss.data.local.ECDatabase
+import com.org.labss.data.local.SearchHistoryDao
 import com.org.labss.data.repository.ProductRepositoryImpl
 import com.org.labss.domain.repository.ProductRepository
 import retrofit2.Retrofit
@@ -35,6 +37,10 @@ object AppModule {
 
     fun provideProductDao(context: Context): ProductDao = provideDatabase(context).productDao()
 
+    fun provideCategoryDao(context: Context): CategoryDao = provideDatabase(context).categoryDao()
+
+    fun provideSearchHistoryDao(context: Context): SearchHistoryDao = provideDatabase(context).searchHistoryDao()
+
     private fun provideRetrofit(): Retrofit {
         return retrofit ?: synchronized(this) {
             retrofit ?: Retrofit.Builder()
@@ -50,7 +56,9 @@ object AppModule {
     fun provideProductRepository(context: Context): ProductRepository {
         return ProductRepositoryImpl(
             apiService = provideApiService(),
-            productDao = provideProductDao(context)
+            productDao = provideProductDao(context),
+            categoryDao = provideCategoryDao(context),
+            searchHistoryDao = provideSearchHistoryDao(context)
         )
     }
 }

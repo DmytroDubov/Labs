@@ -1,6 +1,8 @@
 package com.org.labss.domain.repository
 
+import com.org.labss.domain.model.Category
 import com.org.labss.domain.model.Product
+import com.org.labss.domain.model.SearchHistoryItem
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {
@@ -16,4 +18,15 @@ interface ProductRepository {
     suspend fun decreaseQuantity(productId: Int)
     suspend fun updateQuantity(productId: Int, quantity: Int)
     suspend fun toggleFavorite(productId: Int)
+
+    // Categories table
+    fun observeCategories(): Flow<List<Category>>
+    suspend fun syncCategories()
+
+    // Search history table
+    fun observeSearchHistory(): Flow<List<SearchHistoryItem>>
+    suspend fun saveSearchQuery(query: String, resultCount: Int = 0)
+    suspend fun deleteSearchQuery(query: String)
+    suspend fun clearSearchHistory()
+    suspend fun getRecentSearches(limit: Int = 10): List<SearchHistoryItem>
 }

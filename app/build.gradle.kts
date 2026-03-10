@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)
 
     alias(libs.plugins.kotlin.serialization)
 }
@@ -76,13 +75,9 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
-    implementation(libs.androidx.hilt.havigation.compose)
-    implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.firebase.appdistribution.gradle)
-    ksp(libs.dagger.hilt.android.compiler)
 
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
@@ -90,7 +85,6 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
-    // Unit Tests
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockk)
