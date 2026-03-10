@@ -20,6 +20,7 @@ import com.org.labss.ui.features.components.FavoriteIcon
 import com.org.labss.ui.vm.ProductEvent
 import com.org.labss.ui.vm.ProductUiState
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.text.style.TextOverflow
 import com.org.labss.ui.theme.BlackPrimary
 import com.org.labss.ui.theme.LightGraySurface
@@ -48,14 +49,19 @@ fun HomeScreen(
                 readOnly = false,
                 onClick = { onNavigateToSearch(state.query, state.selectedCategory) },
                 onSearchAction = { query ->
-                    onEvent(ProductEvent.OnSearchQueryChanged(query))
-                    onNavigateToSearch(query, state.selectedCategory)
+                    val effectiveQuery = query.ifBlank {
+                        state.popularProducts.firstOrNull()?.title
+                            ?: state.products.firstOrNull()?.title
+                            ?: "Капучино"
+                    }
+                    onEvent(ProductEvent.OnSearchQueryChanged(effectiveQuery))
+                    onNavigateToSearch(effectiveQuery, state.selectedCategory)
                 }
             )
         }
 
         item {
-            Text(text = "Our last giveaway", color = BlackPrimary)
+            Text(text = "Our last giveaway", color = BlackPrimary,style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(12.dp))
             Box(
                 modifier = Modifier
@@ -66,7 +72,7 @@ fun HomeScreen(
         }
 
         item {
-            Text(text = "Popular categories", color = BlackPrimary)
+            Text(text = "Popular categories", color = BlackPrimary,style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(12.dp))
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 items(state.categories.take(4)) { category ->
@@ -79,7 +85,7 @@ fun HomeScreen(
         }
 
         item {
-            Text(text = "Popular products", color = BlackPrimary)
+            Text(text = "Popular products", color = BlackPrimary,style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(12.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
