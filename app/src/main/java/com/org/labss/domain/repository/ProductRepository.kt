@@ -21,7 +21,6 @@ interface ProductRepository {
 
     // Categories table
     fun observeCategories(): Flow<List<Category>>
-    suspend fun syncCategories()
 
     // Search history table
     fun observeSearchHistory(): Flow<List<SearchHistoryItem>>
