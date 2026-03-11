@@ -5,7 +5,6 @@ import com.org.labss.data.local.ProductEntity
 import com.org.labss.data.mapper.toDomain
 import com.org.labss.data.mapper.toEntity
 import com.org.labss.domain.model.Product
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -15,16 +14,19 @@ class ProductMappersTest {
 
     private val sampleDto = ProductDto(
         id = 1,
+        categoryId = 1,
         title = "Навушники",
         description = "Гарні навушники",
         price = 2999.0,
         imageUrl = "https://example.com/img.jpg",
         isPopular = false,
-        category = "Електроніка"
+        isFavorite = false,
+        quantity = 0
     )
 
     private val sampleEntity = ProductEntity(
         id = 1,
+        categoryId = 1,
         title = "Навушники",
         description = "Гарні навушники",
         price = 2999.0,
@@ -38,13 +40,14 @@ class ProductMappersTest {
 
     @Test
     fun `dto toEntity maps all fields correctly`() {
-        val entity = sampleDto.toEntity()
+        val entity = sampleDto.toEntity(categoryName = "Електроніка")
         assertEquals(sampleDto.id, entity.id)
+        assertEquals(sampleDto.categoryId, entity.categoryId)
         assertEquals(sampleDto.title, entity.title)
         assertEquals(sampleDto.description, entity.description)
         assertEquals(sampleDto.price, entity.price, 0.01)
         assertEquals(sampleDto.imageUrl, entity.imageUrl)
-        assertEquals(sampleDto.category, entity.category)
+        assertEquals("Електроніка", entity.category)
     }
 
     @Test
@@ -62,7 +65,7 @@ class ProductMappersTest {
     @Test
     fun `dto toEntity preserves quantity`() {
         val entity = sampleDto.toEntity(quantity = 5)
-        Assert.assertEquals(5, entity.quantity)
+        assertEquals(5, entity.quantity)
     }
 
     @Test
@@ -117,13 +120,13 @@ class ProductMappersTest {
 
     @Test
     fun `dto toEntity default quantity is 0`() {
-        val entity = sampleDto.toEntity()
-        Assert.assertEquals(0, entity.quantity)
+        val entity = sampleDto.toEntity(categoryName = "Електроніка")
+        assertEquals(0, entity.quantity)
     }
 
     @Test
     fun `dto toEntity default isFavorite is false`() {
-        val entity = sampleDto.toEntity()
+        val entity = sampleDto.toEntity(categoryName = "Електроніка")
         assertFalse(entity.isFavorite)
     }
 }

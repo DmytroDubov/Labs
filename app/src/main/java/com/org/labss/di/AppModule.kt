@@ -9,6 +9,8 @@ import com.org.labss.data.local.ECDatabase
 import com.org.labss.data.local.SearchHistoryDao
 import com.org.labss.data.repository.ProductRepositoryImpl
 import com.org.labss.domain.repository.ProductRepository
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -41,10 +43,20 @@ object AppModule {
 
     fun provideSearchHistoryDao(context: Context): SearchHistoryDao = provideDatabase(context).searchHistoryDao()
 
+    private fun provideOkHttpClient(): OkHttpClient {
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        return OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+    }
+
     private fun provideRetrofit(): Retrofit {
         return retrofit ?: synchronized(this) {
             retrofit ?: Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(provideOkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .also { retrofit = it }
