@@ -1,0 +1,58 @@
+name: Android CI/CD Pipeline
+
+# Тригери для запуску пайплайну (аналогічно до вебверсії)
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest # Стандартний Linux-сервер для збірки Android
+
+    steps:
+      # Крок 1: Отримання коду з репозиторію
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Крок 2: Налаштування середовища (Java замість Node.js)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle # Кешування залежностей для прискорення наступних збірок
+
+      # Крок 3: Надання прав на виконання файлу Gradle
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Крок 4: Перевірка  якості коду (Linting)
+      - name: Run Android Lint (та/або ktlint)
+        run: ./gradlew lintDebug
+
+      # Крок 5: Запуск Unit-тестів (наприклад, для логіки відстеження тренувань чи ШІ-прогнозів)
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest
+
+      # Крок 6: Збірка застосунку (аналог npm run build)
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      # Крок 7: Збереження артефакту (APK файлу)
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sports-app-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      # Крок 8: Безперервна доставка (CD) у Firebase App Distribution
+      - name: Distribute app to testers via Firebase
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          token: ${{ secrets.FIREBASE_TOKEN }}
+          groups: testers # Назва групи, яку ви створили у Firebase
+          file: app/build/outputs/apk/debug/app-debug.apk
