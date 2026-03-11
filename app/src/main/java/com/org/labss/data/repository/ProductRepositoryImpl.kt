@@ -3,11 +3,12 @@ package com.org.labss.data.repository
 import android.util.Log
 import com.org.labss.data.api.ApiService
 import com.org.labss.data.local.CategoryDao
-import com.org.labss.data.local.CategoryEntity
 import com.org.labss.data.local.ProductDao
 import com.org.labss.data.local.ProductEntity
 import com.org.labss.data.local.SearchHistoryDao
 import com.org.labss.data.local.SearchHistoryEntity
+import com.org.labss.data.api.SearchHistoryResponse
+import com.org.labss.data.mapper.toDto
 import com.org.labss.data.mapper.toDomain
 import com.org.labss.data.mapper.toEntity
 import com.org.labss.domain.model.Category
@@ -43,15 +44,13 @@ class ProductRepositoryImpl(
         try {
             val response = apiService.getProducts()
 
-            // Спочатку зберігаємо категорії
             val categoryEntities = response.categories.map { it.toEntity() }
+            productDao.clearAll()
             categoryDao.clearAll()
             categoryDao.insertAll(categoryEntities)
 
-            // Карта id -> name для резолвингу категорій
             val categoryMap = response.categories.associate { it.id to it.name }
 
-            // Зберігаємо продукти
             val entities = response.products.mapIndexed { index, dto ->
                 val currentQty = productDao.getQuantityById(dto.id) ?: 0
                 val currentFavorite = productDao.getFavoriteById(dto.id) ?: dto.isFavorite
@@ -66,8 +65,6 @@ class ProductRepositoryImpl(
             }
             productDao.insertAll(entities)
 
-            // Оновлюємо список категорій в state
-            val categories = response.categories.map { it.name }
             Log.d("API_TEST", "Завантажено: ${entities.size} товарів, ${categoryEntities.size} категорій")
         } catch (e: Exception) {
             Log.e("API_TEST", "Помилка завантаження даних: ${e.message}", e)
@@ -99,7 +96,6 @@ class ProductRepositoryImpl(
             ProductEntity(id = 8, categoryId = 3, title = "Yoga Mat", description = "Non-slip exercise mat", price = 34.99, imageUrl = "https://via.placeholder.com/150", isPopular = false, category = "Sports")
         )
         productDao.insertAll(fallback)
-        syncCategories()
         Log.w("API_TEST", "Завантажено fallback дані (${fallback.size} товарів)")
     }
 
@@ -129,17 +125,9 @@ class ProductRepositoryImpl(
         productDao.toggleFavorite(productId)
     }
 
-    // ─── Categories ──────────────────────────────────────────────────────────
-
     override fun observeCategories(): Flow<List<Category>> =
         categoryDao.observeAllCategories().map { list -> list.map { it.toDomain() } }
 
-    override suspend fun syncCategories() {
-        // Категорії синхронізуються під час refreshProducts з API
-        // Цей метод залишається для сумісності
-    }
-
-    // ─── Search History ───────────────────────────────────────────────────────
 
     override fun observeSearchHistory(): Flow<List<SearchHistoryItem>> =
         searchHistoryDao.observeAll().map { list -> list.map { it.toDomain() } }
@@ -154,16 +142,45 @@ class ProductRepositoryImpl(
                 resultCount = resultCount
             )
         )
+        pushSearchHistoryToServer()
     }
 
     override suspend fun deleteSearchQuery(query: String) {
         searchHistoryDao.deleteByQuery(query)
+        pushSearchHistoryToServer()
     }
 
     override suspend fun clearSearchHistory() {
         searchHistoryDao.clearAll()
+        pushSearchHistoryToServer()
     }
 
     override suspend fun getRecentSearches(limit: Int): List<SearchHistoryItem> =
         searchHistoryDao.getRecent(limit).map { it.toDomain() }
+
+    override suspend fun syncSearchHistory() {
+        try {
+            val remote = apiService.getSearchHistory()
+            val localQueries = searchHistoryDao.getRecent(100).map { it.query }.toSet()
+            val newEntries = remote.history
+                .filter { it.query.isNotBlank() && it.query !in localQueries }
+                .map { it.toEntity() }
+            if (newEntries.isNotEmpty()) {
+                newEntries.forEach { searchHistoryDao.insert(it) }
+                Log.d("SEARCH_HISTORY", "Синхронізовано ${newEntries.size} записів з сервера")
+            }
+        } catch (e: Exception) {
+            Log.e("SEARCH_HISTORY", "Помилка синхронізації history: ${e.message}")
+        }
+    }
+
+    private suspend fun pushSearchHistoryToServer() {
+        try {
+            val localHistory = searchHistoryDao.getRecent(50).map { it.toDto() }
+            apiService.updateSearchHistory(SearchHistoryResponse(history = localHistory))
+            Log.d("SEARCH_HISTORY", "Збережено ${localHistory.size} записів на сервер")
+        } catch (e: Exception) {
+            Log.e("SEARCH_HISTORY", "Помилка збереження history на сервер: ${e.message}")
+        }
+    }
 }

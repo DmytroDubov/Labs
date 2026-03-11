@@ -55,6 +55,7 @@ fun HomeScreen(
                             ?: "Капучино"
                     }
                     onEvent(ProductEvent.OnSearchQueryChanged(effectiveQuery))
+                    onEvent(ProductEvent.OnSearchSubmitted(effectiveQuery, state.products.size))
                     onNavigateToSearch(effectiveQuery, state.selectedCategory)
                 }
             )

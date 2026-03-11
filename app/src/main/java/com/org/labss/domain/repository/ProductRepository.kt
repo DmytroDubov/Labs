@@ -21,7 +21,6 @@ interface ProductRepository {
 
     // Categories table
     fun observeCategories(): Flow<List<Category>>
-    suspend fun syncCategories()
 
     // Search history table
     fun observeSearchHistory(): Flow<List<SearchHistoryItem>>
@@ -29,4 +28,5 @@ interface ProductRepository {
     suspend fun deleteSearchQuery(query: String)
     suspend fun clearSearchHistory()
     suspend fun getRecentSearches(limit: Int = 10): List<SearchHistoryItem>
+    suspend fun syncSearchHistory()
 }

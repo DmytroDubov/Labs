@@ -24,7 +24,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled  = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -40,6 +40,22 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    buildTypes {
+        getByName("debug") {
+            buildConfigField("String", "APP_STATUS", "\"Development\"")
+        }
+        release {
+            isMinifyEnabled = true
+            buildConfigField("String", "APP_STATUS", "\"Production Mode\"")
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
     }
     packaging {
         resources {

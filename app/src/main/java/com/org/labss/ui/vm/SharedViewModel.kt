@@ -32,6 +32,7 @@ class SharedViewModel(
     private fun loadInitial() {
         viewModelScope.launch {
             repository.refreshProducts()
+            repository.syncSearchHistory()
             val categories = repository.getAllCategories()
             _uiState.update { it.copy(categories = categories, isLoading = false) }
         }

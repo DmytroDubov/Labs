@@ -3,6 +3,7 @@ package com.org.labss
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.org.labss.data.local.CategoryEntity
 import com.org.labss.data.local.ECDatabase
 import com.org.labss.data.local.ProductDao
 import com.org.labss.data.local.ProductEntity
@@ -29,29 +30,34 @@ class ProductDaoTest {
     private lateinit var db: ECDatabase
     private lateinit var dao: ProductDao
 
+    private val testCategories = listOf(
+        CategoryEntity(id = 1, name = "Електроніка",  imageUrl = ""),
+        CategoryEntity(id = 2, name = "Аксесуари",    imageUrl = ""),
+        CategoryEntity(id = 3, name = "Накопичувачі", imageUrl = ""),
+    )
+
     private val testEntities = listOf(
-        ProductEntity(1, "Навушники", "Гарні навушники", 2999.0, "", true, "Електроніка", false, 0),
-        ProductEntity(2, "Клавіатура", "RGB клавіатура", 3200.0, "", true, "Аксесуари", false, 0),
-        ProductEntity(3, "Мишка", "Ігрова мишка", 1200.0, "", false, "Аксесуари", false, 0),
-        ProductEntity(4, "Монітор", "4K монітор", 12500.0, "", true, "Електроніка", false, 0),
-        ProductEntity(5, "SSD", "Зовнішній SSD", 3800.0, "", false, "Накопичувачі", false, 0),
+        ProductEntity(id = 1, categoryId = 1, title = "Навушники",  description = "Гарні навушники",  price = 2999.0,  imageUrl = "https://img/1.png", isPopular = true,  category = "Електроніка",  isFavorite = false, quantity = 0),
+        ProductEntity(id = 2, categoryId = 2, title = "Клавіатура", description = "RGB клавіатура",   price = 3200.0,  imageUrl = "https://img/2.png", isPopular = true,  category = "Аксесуари",    isFavorite = false, quantity = 0),
+        ProductEntity(id = 3, categoryId = 2, title = "Мишка",      description = "Ігрова мишка",     price = 1200.0,  imageUrl = "https://img/3.png", isPopular = false, category = "Аксесуари",    isFavorite = false, quantity = 0),
+        ProductEntity(id = 4, categoryId = 1, title = "Монітор",    description = "4K монітор",       price = 12500.0, imageUrl = "https://img/4.png", isPopular = true,  category = "Електроніка",  isFavorite = false, quantity = 0),
+        ProductEntity(id = 5, categoryId = 3, title = "SSD",        description = "Зовнішній SSD",    price = 3800.0,  imageUrl = "https://img/5.png", isPopular = false, category = "Накопичувачі", isFavorite = false, quantity = 0),
     )
 
     @Before
-    fun createDb() {
+    fun createDb() = runTest {
         db = Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(),
             ECDatabase::class.java
         ).allowMainThreadQueries().build()
         dao = db.productDao()
+        db.categoryDao().insertAll(testCategories)
     }
 
     @After
     fun closeDb() {
         db.close()
     }
-
-    // --- Insert + Read ---
 
     @Test
     fun insertAll_and_observeAllProducts_returnsAllItems() = runTest {
@@ -134,8 +140,6 @@ class ProductDaoTest {
         Assert.assertTrue(result.isEmpty())
     }
 
-    // --- Quantity ---
-
     @Test
     fun updateQuantity_changesQuantityCorrectly() = runTest {
         dao.insertAll(testEntities)
@@ -167,8 +171,6 @@ class ProductDaoTest {
         dao.decreaseQuantity(1)
         Assert.assertEquals(0, dao.getQuantityById(1))
     }
-
-    // --- Favorite ---
 
     @Test
     fun updateFavorite_setsToTrue() = runTest {
@@ -220,8 +222,6 @@ class ProductDaoTest {
         Assert.assertTrue("Аксесуари" in categories)
         Assert.assertTrue("Накопичувачі" in categories)
     }
-
-    // --- Clear ---
 
     @Test
     fun clearAll_removesAllProducts() = runTest {
