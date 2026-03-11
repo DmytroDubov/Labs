@@ -1,5 +1,7 @@
 # Labss — E-Commerce Catalogue App
 
+[![Android CI/CD Pipeline](https://github.com/DmytroDubov/Labs/actions/workflows/ci-cd.yml/badge.svg?branch=develop)](https://github.com/DmytroDubov/Labs/actions/workflows/ci-cd.yml)
+
 Android-додаток каталогу е-комерції, розроблений на Kotlin з використанням Jetpack Compose.
 
 ## Технології
