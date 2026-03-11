@@ -19,3 +19,13 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Зберегти ваші моделі даних (замініть com.example.app на ваш package name)
+-keep class com.org.labss.** { *; }
+
+# Якщо ви використовуєте Retrofit або Gson
+-keepattributes Signature, InnerClasses, EnclosingMethod
+-keep class com.google.gson.** { *; }
+
+# Дозволити перегляд номерів рядків у звітах про помилки (Sourcemaps аналог)
+-keepattributes SourceFile, LineNumberTable
