@@ -28,6 +28,7 @@ mockk = "1.13.12"
 turbine = "1.1.0"
 coroutinesTest = "1.8.1"
 archCoreTesting = "2.2.0"
+uiText = "1.10.4"
 
 
 [libraries]
@@ -68,6 +69,7 @@ turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCoreTesting" }
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 
 [plugins]
 

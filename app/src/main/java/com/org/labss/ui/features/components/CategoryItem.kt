@@ -4,22 +4,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Category
-import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.org.labss.domain.model.Category // 🌟 Ваш новий імпорт
 import com.org.labss.ui.theme.BlackPrimary
 import com.org.labss.ui.theme.LightGraySurface
-import com.org.labss.ui.theme.MediumGrayText
-
 
 @Composable
 fun CategoryItem(
-    title: String,
+    category: Category, // 🌟 Приймаємо цілий об'єкт замість просто рядка
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -29,17 +28,26 @@ fun CategoryItem(
     ) {
         Box(
             modifier = Modifier
-                .size(64.dp)
-                .background(LightGraySurface, CircleShape),
+                .size(72.dp)
+                .background(LightGraySurface, CircleShape)
+                .clip(CircleShape), // Гарантуємо, що всередині все буде круглим
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Category,
-                contentDescription = title,
-                tint = BlackPrimary
+            // 🌟 Використовуємо ваш ProductImage для завантаження картинки
+            ProductImage(
+                imageUrl = category.imageUrl, // Беремо посилання з об'єкта
+                modifier = Modifier.fillMaxSize(),
+                shape = CircleShape // Передаємо круглу форму
             )
         }
+
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = title, color = MediumGrayText)
+
+        Text(
+            text = category.name, // Беремо назву з об'єкта
+            color = BlackPrimary,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Medium
+        )
     }
 }

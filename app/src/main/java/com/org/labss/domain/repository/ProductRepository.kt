@@ -19,10 +19,8 @@ interface ProductRepository {
     suspend fun updateQuantity(productId: Int, quantity: Int)
     suspend fun toggleFavorite(productId: Int)
 
-    // Categories table
     fun observeCategories(): Flow<List<Category>>
 
-    // Search history table
     fun observeSearchHistory(): Flow<List<SearchHistoryItem>>
     suspend fun saveSearchQuery(query: String, resultCount: Int = 0)
     suspend fun deleteSearchQuery(query: String)

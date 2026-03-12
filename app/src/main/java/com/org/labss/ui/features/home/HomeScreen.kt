@@ -21,6 +21,8 @@ import com.org.labss.ui.vm.ProductEvent
 import com.org.labss.ui.vm.ProductUiState
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import com.org.labss.ui.theme.BlackPrimary
 import com.org.labss.ui.theme.LightGraySurface
@@ -31,6 +33,28 @@ fun HomeScreen(
     onEvent: (ProductEvent) -> Unit,
     onNavigateToSearch: (String, String?) -> Unit
 ) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .safeDrawingPadding(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+    CustomSearchBar(
+        value = state.query,
+        onValueChange = { onEvent(ProductEvent.OnSearchQueryChanged(it)) },
+        readOnly = false,
+        onClick = { onNavigateToSearch(state.query, state.selectedCategory) },
+        onSearchAction = { query ->
+            val effectiveQuery = query.ifBlank {
+                state.popularProducts.firstOrNull()?.title
+                    ?: state.products.firstOrNull()?.title
+                    ?: "Капучино"
+            }
+            onEvent(ProductEvent.OnSearchQueryChanged(effectiveQuery))
+            onEvent(ProductEvent.OnSearchSubmitted(effectiveQuery, state.products.size))
+            onNavigateToSearch(effectiveQuery, state.selectedCategory)
+        }
+    )
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -39,47 +63,52 @@ fun HomeScreen(
         contentPadding = PaddingValues(
             top = 16.dp,
             bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()+6.dp
-        )
+        ),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+
 
     ) {
-        item {
-            CustomSearchBar(
-                value = state.query,
-                onValueChange = { onEvent(ProductEvent.OnSearchQueryChanged(it)) },
-                readOnly = false,
-                onClick = { onNavigateToSearch(state.query, state.selectedCategory) },
-                onSearchAction = { query ->
-                    val effectiveQuery = query.ifBlank {
-                        state.popularProducts.firstOrNull()?.title
-                            ?: state.products.firstOrNull()?.title
-                            ?: "Капучино"
-                    }
-                    onEvent(ProductEvent.OnSearchQueryChanged(effectiveQuery))
-                    onEvent(ProductEvent.OnSearchSubmitted(effectiveQuery, state.products.size))
-                    onNavigateToSearch(effectiveQuery, state.selectedCategory)
-                }
+
+item{
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp) // Ваша висота
+                .background(LightGraySurface, RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(16.dp)), // 🌟 ВАЖЛИВО: Обрізаємо картинку по кутах
+            contentAlignment = Alignment.Center
+        ) {
+            // 1. Отримуємо посилання на картинку з першого популярного товару
+            val bannerImageUrl = state.popularProducts.firstOrNull()?.imageUrl ?: ""
+
+            // 2. Використовуємо bannerImageUrl замість старого product.imageUrl
+            ProductImage(
+                imageUrl = bannerImageUrl,
+                modifier = Modifier.fillMaxSize(),
+                shape = RoundedCornerShape(16.dp)
             )
+
         }
+}
+
 
         item {
-            Text(text = "Our last giveaway", color = BlackPrimary,style = MaterialTheme.typography.titleLarge)
-            Spacer(modifier = Modifier.height(12.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .background(LightGraySurface, RoundedCornerShape(16.dp))
+            Text(
+                text = "Popular categories",
+                color = BlackPrimary,
+                style = MaterialTheme.typography.titleLarge
             )
-        }
-
-        item {
-            Text(text = "Popular categories", color = BlackPrimary,style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(12.dp))
+
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(state.categories.take(4)) { category ->
-                    CategoryItem(title = category) {
-                        onEvent(ProductEvent.OnCategorySelected(category))
-                        onNavigateToSearch("", category)
+                // 🌟 Змінили state.categories на state.categoryObjects
+                items(state.categoryObjects.take(4)) { categoryObj ->
+                    CategoryItem(
+                        category = categoryObj // 🌟 Передаємо цілий об'єкт із картинкою
+                    ) {
+                        // 🌟 Звертаємось до назви через categoryObj.name
+                        onEvent(ProductEvent.OnCategorySelected(categoryObj.name))
+                        onNavigateToSearch("", categoryObj.name)
                     }
                 }
             }
@@ -102,10 +131,7 @@ fun HomeScreen(
                                 ProductGridCard(
                                     product = product,
                                     isFavorite = product.isFavorite,
-                                    onToggleFavorite = { onEvent(ProductEvent.OnToggleFavorite(product.id)) },
-                                    onAdd = { onEvent(ProductEvent.OnAddProductClicked(product.id)) },
-                                    onIncrease = { onEvent(ProductEvent.OnIncreaseQuantity(product.id)) },
-                                    onDecrease = { onEvent(ProductEvent.OnDecreaseQuantity(product.id)) }
+                                    onToggleFavorite = { onEvent(ProductEvent.OnToggleFavorite(product.id)) }
                                 )
                             }
                         }
@@ -118,63 +144,67 @@ fun HomeScreen(
         }
     }
 }
+}
 
 @Composable
 private fun ProductGridCard(
     product: Product,
     isFavorite: Boolean,
-    onToggleFavorite: () -> Unit,
-    onAdd: () -> Unit,
-    onIncrease: () -> Unit,
-    onDecrease: () -> Unit
+    onToggleFavorite: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(245.dp)
-            .background(LightGraySurface, RoundedCornerShape(16.dp))
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        ProductImage(
-            imageUrl = product.imageUrl,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
-        )
-
-        Text(
-            text = product.title,
-            color = BlackPrimary,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.height(40.dp)
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .aspectRatio(1f)
+                .background(LightGraySurface, RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(16.dp)),
+            contentAlignment = Alignment.Center
         ) {
-            Text(text = "$${product.price}", color = BlackPrimary)
-
+            ProductImage(
+                imageUrl = product.imageUrl,
+                modifier = Modifier.fillMaxSize()
+            )
         }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top // Вирівнюємо серце по верхньому краю тексту
         ) {
-        DynamicAddButton(
-            quantity = product.quantity,
-            onAdd = onAdd,
-            onIncrease = onIncrease,
-            onDecrease = onDecrease
-        )
-        FavoriteIcon(
-            isFavorite = isFavorite,
-            onClick = onToggleFavorite
-        )
-    }
-}
+            // Колонка для Назви та Ціни
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp), // Відступ, щоб довгий текст не наліз на серце
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = product.title,
+                    color = BlackPrimary,
+                    maxLines = 1, // На ескізі текст займає один рядок
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium
+                )
 
+                Text(
+                    text = "$${product.price}",
+                    color = BlackPrimary,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            // Іконка улюбленого
+            FavoriteIcon(
+                isFavorite = isFavorite,
+                onClick = onToggleFavorite
+            )
+        }
+    }
 }

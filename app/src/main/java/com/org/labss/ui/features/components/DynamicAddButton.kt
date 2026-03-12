@@ -5,13 +5,17 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.org.labss.ui.theme.BlackPrimary
-import com.org.labss.ui.theme.White
 
 
 @Composable
@@ -19,33 +23,49 @@ fun DynamicAddButton(
     quantity: Int,
     onAdd: () -> Unit,
     onIncrease: () -> Unit,
-    onDecrease: () -> Unit,
-    modifier: Modifier = Modifier
+    onDecrease: () -> Unit
 ) {
     if (quantity == 0) {
-        Box(
-            modifier = modifier
-                .height(36.dp)
-                .background(BlackPrimary, RoundedCornerShape(8.dp))
-                .clickable { onAdd() }
-                .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.Center
+        Button(
+            onClick = onAdd,
+            modifier = Modifier.height(34.dp).width(75.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+            shape = RoundedCornerShape(10.dp),
+            contentPadding = PaddingValues(0.dp)
         ) {
-            Text(text = "Add", color = White)
+            Text("Add", color = Color.White, style = MaterialTheme.typography.labelLarge)
         }
     } else {
         Row(
-            modifier = modifier
-                .height(36.dp)
-                .background(White, RoundedCornerShape(8.dp))
-                .border(1.dp, BlackPrimary, RoundedCornerShape(8.dp))
-                .padding(horizontal = 12.dp),
+            modifier = Modifier.width(90.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "-", modifier = Modifier.clickable { onDecrease() })
-            Text(text = quantity.toString())
-            Text(text = "+", modifier = Modifier.clickable { onIncrease() })
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
+                    .clickable { onDecrease() },
+                contentAlignment = Alignment.Center
+            ) {
+                Text("-", style = MaterialTheme.typography.bodyLarge)
+            }
+
+            Text(
+                text = quantity.toString(),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold
+            )
+
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
+                    .clickable { onIncrease() },
+                contentAlignment = Alignment.Center
+            ) {
+                Text("+", style = MaterialTheme.typography.bodyLarge)
+            }
         }
     }
 }
