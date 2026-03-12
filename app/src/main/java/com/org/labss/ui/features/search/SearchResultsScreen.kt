@@ -1,6 +1,8 @@
 package com.org.labss.ui.features.search
 
+import android.R.color.white
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,10 +28,16 @@ import com.org.labss.ui.features.components.ProductImage
 import com.org.labss.ui.vm.ProductEvent
 import com.org.labss.ui.vm.ProductUiState
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import com.org.labss.ui.theme.BlackPrimary
 import com.org.labss.ui.theme.LightGraySurface
 import com.org.labss.ui.theme.MediumGrayText
+import com.org.labss.ui.theme.White
 
 @Composable
 fun SearchResultsScreen(
@@ -39,26 +47,28 @@ fun SearchResultsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)),
+            .safeDrawingPadding(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         CustomSearchBar(
             value = state.query,
             onValueChange = { onEvent(ProductEvent.OnSearchQueryChanged(it)) },
             onSearchAction = { query ->
-                val effectiveQuery = query.ifBlank {
+                val effectiveQuery = if (query.isBlank() && state.selectedCategory != null) {
+                    ""
+                } else query.ifBlank {
                     state.popularProducts.firstOrNull()?.title
                         ?: state.products.firstOrNull()?.title
                         ?: "Капучино"
                 }
                 onEvent(ProductEvent.OnSearchQueryChanged(effectiveQuery))
-                onEvent(ProductEvent.OnSearchSubmitted(effectiveQuery, state.products.size))
+                if (effectiveQuery.isNotEmpty()) {
+                    onEvent(ProductEvent.OnSearchSubmitted(effectiveQuery, state.products.size))
+                }
             }
         )
 
-        // Якщо запит порожній — показуємо пошукову історію
-        if (state.query.isEmpty() && state.searchHistory.isNotEmpty()) {
+        if (state.query.isEmpty() && state.selectedCategory == null && state.searchHistory.isNotEmpty()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -122,7 +132,6 @@ fun SearchResultsScreen(
                 }
             }
         } else {
-            // Показуємо результати пошуку
             Text(
                 text = "Results",
                 color = BlackPrimary,
@@ -173,36 +182,47 @@ private fun ProductListItem(
     onIncrease: () -> Unit,
     onDecrease: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(LightGraySurface, RoundedCornerShape(16.dp))
-            .padding(12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(text = product.title, color = BlackPrimary)
-            Text(text = product.description, color = MediumGrayText)
-            Text(text = "$${product.price}", color = BlackPrimary)
-        }
 
-        Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            ProductImage(
-                imageUrl = product.imageUrl,
-                modifier = Modifier.size(90.dp),
-                shape = RoundedCornerShape(8.dp)
-            )
-            DynamicAddButton(
-                quantity = product.quantity,
-                onAdd = onAdd,
-                onIncrease = onIncrease,
-                onDecrease = onDecrease
-            )
-        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Ліва частина: Текст
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = product.title, style = MaterialTheme.typography.titleMedium)
+                Text(text = product.description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "$${product.price}", style = MaterialTheme.typography.titleLarge)
+            }
+
+            Box(
+                modifier = Modifier
+                    .size(width = 100.dp, height = 120.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color(0xFFF2F2F2)),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxHeight().padding(bottom = 8.dp, top = 16.dp)
+                ) {
+                    ProductImage(
+                        imageUrl = product.imageUrl,
+                        modifier = Modifier.size(60.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+
+                   DynamicAddButton(
+                        quantity = product.quantity,
+                        onAdd = onAdd,
+                        onIncrease = onIncrease,
+                        onDecrease = onDecrease
+                    )
+                }
+            }
+
     }
 }

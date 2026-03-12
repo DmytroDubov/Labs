@@ -18,7 +18,6 @@ class SharedViewModel(
     private val queryFlow = MutableStateFlow("")
     private val categoryFlow = MutableStateFlow<String?>(null)
 
-    // true після першої ініціалізації SearchScreen з URL-аргументів
     var isSearchInitialized: Boolean = false
 
     init {
