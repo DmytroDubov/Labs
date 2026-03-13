@@ -189,7 +189,6 @@ private fun ProductListItem(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Ліва частина: Текст
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = product.title, style = MaterialTheme.typography.titleMedium)
                 Text(text = product.description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
@@ -201,28 +200,25 @@ private fun ProductListItem(
                 modifier = Modifier
                     .size(width = 100.dp, height = 120.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFF2F2F2)),
-                contentAlignment = Alignment.Center
+                    .background(Color(0xFFF2F2F2)) 
+                ,contentAlignment = Alignment.BottomCenter
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxHeight().padding(bottom = 8.dp, top = 16.dp)
-                ) {
-                    ProductImage(
-                        imageUrl = product.imageUrl,
-                        modifier = Modifier.size(60.dp),
-                        shape = RoundedCornerShape(8.dp)
-                    )
+                ProductImage(
+                    imageUrl = product.imageUrl,
+                    modifier = Modifier.fillMaxSize(),
+                    shape = RoundedCornerShape(16.dp)
+                )
 
-                   DynamicAddButton(
-                        quantity = product.quantity,
-                        onAdd = onAdd,
-                        onIncrease = onIncrease,
-                        onDecrease = onDecrease
-                    )
-                }
+                DynamicAddButton(
+                    quantity = product.quantity,
+                    onAdd = onAdd,
+                    onIncrease = onIncrease,
+                    onDecrease = onDecrease,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                )
+            }
             }
 
     }
-}
+
