@@ -18,7 +18,7 @@ import com.org.labss.ui.theme.LightGraySurface
 
 @Composable
 fun CategoryItem(
-    category: Category, // 🌟 Приймаємо цілий об'єкт замість просто рядка
+    category: Category,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -30,21 +30,20 @@ fun CategoryItem(
             modifier = Modifier
                 .size(72.dp)
                 .background(LightGraySurface, CircleShape)
-                .clip(CircleShape), // Гарантуємо, що всередині все буде круглим
+                .clip(CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            // 🌟 Використовуємо ваш ProductImage для завантаження картинки
             ProductImage(
-                imageUrl = category.imageUrl, // Беремо посилання з об'єкта
+                imageUrl = category.imageUrl,
                 modifier = Modifier.fillMaxSize(),
-                shape = CircleShape // Передаємо круглу форму
+                shape = CircleShape
             )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = category.name, // Беремо назву з об'єкта
+            text = category.name,
             color = BlackPrimary,
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Medium

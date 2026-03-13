@@ -70,21 +70,28 @@ fun HomeScreen(
     ) {
 
 item{
+    Text(
+        text = "Last gateway",
+        color = BlackPrimary,
+        style = MaterialTheme.typography.titleLarge
+    )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp) // Ваша висота
+                .fillMaxHeight(0.9f)
                 .background(LightGraySurface, RoundedCornerShape(16.dp))
-                .clip(RoundedCornerShape(16.dp)), // 🌟 ВАЖЛИВО: Обрізаємо картинку по кутах
+                .clip(RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.Center
         ) {
-            // 1. Отримуємо посилання на картинку з першого популярного товару
+
+            Spacer(modifier = Modifier.height(12.dp))
             val bannerImageUrl = state.popularProducts.firstOrNull()?.imageUrl ?: ""
 
-            // 2. Використовуємо bannerImageUrl замість старого product.imageUrl
             ProductImage(
                 imageUrl = bannerImageUrl,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .height(120.dp)
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp)
             )
 
@@ -101,14 +108,12 @@ item{
             Spacer(modifier = Modifier.height(12.dp))
 
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                // 🌟 Змінили state.categories на state.categoryObjects
-                items(state.categoryObjects.take(4)) { categoryObj ->
+                items(state.categoryObjects.take(4)) { category ->
                     CategoryItem(
-                        category = categoryObj // 🌟 Передаємо цілий об'єкт із картинкою
+                        category = category
                     ) {
-                        // 🌟 Звертаємось до назви через categoryObj.name
-                        onEvent(ProductEvent.OnCategorySelected(categoryObj.name))
-                        onNavigateToSearch("", categoryObj.name)
+                        onEvent(ProductEvent.OnCategorySelected(category.name))
+                        onNavigateToSearch("", category.name)
                     }
                 }
             }
@@ -175,19 +180,18 @@ private fun ProductGridCard(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top // Вирівнюємо серце по верхньому краю тексту
+            verticalAlignment = Alignment.Top
         ) {
-            // Колонка для Назви та Ціни
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 8.dp), // Відступ, щоб довгий текст не наліз на серце
+                    .padding(end = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = product.title,
                     color = BlackPrimary,
-                    maxLines = 1, // На ескізі текст займає один рядок
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -200,7 +204,6 @@ private fun ProductGridCard(
                 )
             }
 
-            // Іконка улюбленого
             FavoriteIcon(
                 isFavorite = isFavorite,
                 onClick = onToggleFavorite

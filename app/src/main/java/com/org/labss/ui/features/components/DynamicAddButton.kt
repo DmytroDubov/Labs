@@ -23,12 +23,15 @@ fun DynamicAddButton(
     quantity: Int,
     onAdd: () -> Unit,
     onIncrease: () -> Unit,
-    onDecrease: () -> Unit
+    onDecrease: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     if (quantity == 0) {
         Button(
             onClick = onAdd,
-            modifier = Modifier.height(34.dp).width(75.dp),
+            modifier = modifier
+                .height(34.dp)
+                .width(75.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
             shape = RoundedCornerShape(10.dp),
             contentPadding = PaddingValues(0.dp)
@@ -37,12 +40,13 @@ fun DynamicAddButton(
         }
     } else {
         Row(
-            modifier = Modifier.width(90.dp),
+            modifier = modifier.width(90.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
                 modifier = Modifier
+                    .background(Color.LightGray, RoundedCornerShape(8.dp))
                     .size(28.dp)
                     .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
                     .clickable { onDecrease() },
@@ -59,6 +63,7 @@ fun DynamicAddButton(
 
             Box(
                 modifier = Modifier
+                    .background(Color.LightGray, RoundedCornerShape(8.dp))
                     .size(28.dp)
                     .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
                     .clickable { onIncrease() },
