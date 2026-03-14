@@ -5,6 +5,7 @@ import com.org.labss.domain.model.Product
 import com.org.labss.domain.model.SearchHistoryItem
 
 data class ProductUiState(
+    val isBuyAll: Boolean = false,
     val query: String = "",
     val selectedCategory: String? = null,
     val categories: List<String> = emptyList(),

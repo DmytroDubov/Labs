@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.org.labss.analytic.AnalyticsManager
 import com.org.labss.ui.features.home.HomeScreen
 import com.org.labss.ui.features.search.SearchResultsScreen
 import com.org.labss.ui.vm.ProductEvent
@@ -24,6 +25,11 @@ fun ECNavHost(viewModel: SharedViewModel) {
     val currentRoute = currentBackStack?.destination?.route
 
     LaunchedEffect(currentRoute) {
+        currentRoute?.let { route ->
+            val screenName = route.substringBefore("?")
+            AnalyticsManager.trackScreenView(screenName)
+        }
+
         if (currentRoute == Routes.Home.route) {
             viewModel.onEvent(ProductEvent.OnSearchQueryChanged(""))
             viewModel.onEvent(ProductEvent.OnCategorySelected(null))

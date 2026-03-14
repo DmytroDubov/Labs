@@ -3,7 +3,9 @@ package com.org.labss.ui.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.org.labss.analytic.AnalyticsManager
 import com.org.labss.domain.repository.ProductRepository
+import com.posthog.PostHog
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -17,8 +19,6 @@ class SharedViewModel(
 
     private val queryFlow = MutableStateFlow("")
     private val categoryFlow = MutableStateFlow<String?>(null)
-
-    // true після першої ініціалізації SearchScreen з URL-аргументів
     var isSearchInitialized: Boolean = false
 
     init {
@@ -27,8 +27,19 @@ class SharedViewModel(
         observeCategories()
         observeSearchHistory()
         loadInitial()
+        checkFeatureFlags()
     }
 
+
+    private fun checkFeatureFlags() {
+        PostHog.reloadFeatureFlags {
+            val isBuyAllEnabled = AnalyticsManager.isFeatureEnabled("show-buy-all")
+
+            _uiState.update { it.copy(isBuyAll = isBuyAllEnabled) }
+
+            android.util.Log.d("PostHogDebug", "Флаг Buy All отримано: $isBuyAllEnabled")
+        }
+    }
     private fun loadInitial() {
         viewModelScope.launch {
             repository.refreshProducts()
@@ -81,32 +92,58 @@ class SharedViewModel(
                 queryFlow.value = event.query
                 _uiState.update { it.copy(query = event.query) }
             }
+
             is ProductEvent.OnCategorySelected -> {
                 categoryFlow.value = event.category
                 _uiState.update { it.copy(selectedCategory = event.category) }
+
+                event.category?.let { categoryName ->
+                    AnalyticsManager.trackCategorySelected(categoryName)
+                }
             }
+
             is ProductEvent.OnAddProductClicked -> {
                 viewModelScope.launch { repository.addProduct(event.productId) }
+
+                AnalyticsManager.trackProductAdded(event.productId)
             }
+
             is ProductEvent.OnIncreaseQuantity -> {
                 viewModelScope.launch { repository.increaseQuantity(event.productId) }
+
+                AnalyticsManager.trackQuantityChanged(event.productId, "increase")
             }
+
             is ProductEvent.OnDecreaseQuantity -> {
                 viewModelScope.launch { repository.decreaseQuantity(event.productId) }
+
+                AnalyticsManager.trackQuantityChanged(event.productId, "decrease")
             }
+
             is ProductEvent.OnToggleFavorite -> {
                 viewModelScope.launch { repository.toggleFavorite(event.productId) }
+
+                AnalyticsManager.trackFavoriteToggled(event.productId)
             }
+
             is ProductEvent.OnSearchSubmitted -> {
                 viewModelScope.launch {
                     repository.saveSearchQuery(event.query, event.resultCount)
                 }
+
+                AnalyticsManager.trackSearchSubmitted(event.query, event.resultCount)
             }
+
             is ProductEvent.OnDeleteSearchHistory -> {
                 viewModelScope.launch { repository.deleteSearchQuery(event.query) }
+
+                AnalyticsManager.trackSearchHistoryItemDeleted(event.query)
             }
+
             is ProductEvent.OnClearSearchHistory -> {
                 viewModelScope.launch { repository.clearSearchHistory() }
+
+                AnalyticsManager.trackSearchHistoryCleared()
             }
         }
     }

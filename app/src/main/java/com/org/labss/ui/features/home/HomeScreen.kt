@@ -21,11 +21,14 @@ import com.org.labss.ui.vm.ProductEvent
 import com.org.labss.ui.vm.ProductUiState
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import com.org.labss.ui.theme.BlackPrimary
 import com.org.labss.ui.theme.LightGraySurface
+import com.org.labss.ui.theme.MediumGrayText
 
 @Composable
 fun HomeScreen(
@@ -118,7 +121,12 @@ fun HomeScreen(
                     }
                 }
             }
-
+            item {
+            if (state.isBuyAll) {
+                TextButton(onClick = { onEvent(ProductEvent.OnClearSearchHistory) }) {
+                    Text(text = "Buy all", color = MediumGrayText)
+                }
+            } }
             item {
                 Text(text = "Popular products", color = BlackPrimary,style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(12.dp))
