@@ -158,7 +158,7 @@ fun HomeScreen(
         }
     }
 }
-}
+
 
 @Composable
 private fun ProductGridCard(
