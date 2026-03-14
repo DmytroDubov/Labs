@@ -183,42 +183,41 @@ private fun ProductListItem(
     onDecrease: () -> Unit
 ) {
 
-        Row(
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = product.title, style = MaterialTheme.typography.titleMedium)
+            Text(text = product.description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = "$${product.price}", style = MaterialTheme.typography.titleLarge)
+        }
+
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .size(width = 100.dp, height = 120.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color(0xFFF2F2F2))
+            ,contentAlignment = Alignment.BottomCenter
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = product.title, style = MaterialTheme.typography.titleMedium)
-                Text(text = product.description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "$${product.price}", style = MaterialTheme.typography.titleLarge)
-            }
+            ProductImage(
+                imageUrl = product.imageUrl,
+                modifier = Modifier.fillMaxSize(),
+                shape = RoundedCornerShape(16.dp)
+            )
 
-            Box(
+            DynamicAddButton(
+                quantity = product.quantity,
+                onAdd = onAdd,
+                onIncrease = onIncrease,
+                onDecrease = onDecrease,
                 modifier = Modifier
-                    .size(width = 100.dp, height = 120.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFF2F2F2)) 
-                ,contentAlignment = Alignment.BottomCenter
-            ) {
-                ProductImage(
-                    imageUrl = product.imageUrl,
-                    modifier = Modifier.fillMaxSize(),
-                    shape = RoundedCornerShape(16.dp)
-                )
-
-                DynamicAddButton(
-                    quantity = product.quantity,
-                    onAdd = onAdd,
-                    onIncrease = onIncrease,
-                    onDecrease = onDecrease,
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                )
-            }
-            }
-
+                    .padding(bottom = 8.dp)
+            )
+        }
     }
 
+}
