@@ -89,20 +89,16 @@ class E2ENavigationTest {
             }
         }
 
-        // Чекаємо HomeScreen
         composeRule.waitUntil(timeoutMillis = 5_000) {
             composeRule.onAllNodesWithContentDescription("Search").fetchSemanticsNodes().isNotEmpty()
         }
 
-        // Клікаємо на іконку пошуку — переходимо на SearchResultsScreen
         composeRule.onNodeWithContentDescription("Search").performClick()
 
-        // Чекаємо SearchResultsScreen — там теж є SearchBar з іконкою Search
         composeRule.waitUntil(timeoutMillis = 5_000) {
             composeRule.onAllNodesWithContentDescription("Search").fetchSemanticsNodes().isNotEmpty()
         }
 
-        // Вводимо запит в SearchBar
         composeRule.onNodeWithContentDescription("Search")
             .performScrollTo()
 

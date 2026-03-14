@@ -83,7 +83,6 @@ class ProductDaoTest {
         Assert.assertEquals("Оновлені навушники", result.first { it.id == 1 }.title)
     }
 
-    // --- Popular ---
 
     @Test
     fun observePopularProducts_returnsOnlyPopular() = runTest {
@@ -100,7 +99,6 @@ class ProductDaoTest {
         Assert.assertEquals(testEntities.count { it.isPopular }, popular.size)
     }
 
-    // --- Search ---
 
     @Test
     fun observeByQueryAndCategory_withQuery_filtersCorrectly() = runTest {
@@ -182,7 +180,7 @@ class ProductDaoTest {
 
     @Test
     fun toggleFavorite_switchesToTrue_whenFalse() = runTest {
-        dao.insertAll(testEntities) // всі isFavorite = false
+        dao.insertAll(testEntities)
         dao.toggleFavorite(1)
         val fav = dao.getFavoriteById(1)
         Assert.assertTrue(fav == true)
@@ -204,7 +202,6 @@ class ProductDaoTest {
         Assert.assertFalse(fav2 == true)
     }
 
-    // --- Categories ---
 
     @Test
     fun getAllCategories_returnsDistinctSortedCategories() = runTest {

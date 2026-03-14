@@ -49,7 +49,6 @@ class SharedViewModel(
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeFilteredProducts() {
         viewModelScope.launch {
             combine(queryFlow, categoryFlow) { q, c -> q to c }

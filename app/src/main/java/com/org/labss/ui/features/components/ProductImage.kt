@@ -53,11 +53,11 @@ fun ProductImage(
             when (painter.state) {
                 is AsyncImagePainter.State.Success -> SubcomposeAsyncImageContent()
                 else -> {
-                    Icon(
-                        imageVector = Icons.Outlined.Image,
-                        contentDescription = "Placeholder",
-                        tint = MediumGrayText,
-                    )
+                        Icon(
+                            imageVector = Icons.Outlined.Image,
+                            contentDescription = "Placeholder",
+                            tint = MediumGrayText,
+                        )
 
                 }
             }
