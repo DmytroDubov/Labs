@@ -1,3 +1,4 @@
+
 package com.org.labss.ui.features.components
 
 import androidx.compose.foundation.background
@@ -54,9 +55,10 @@ fun ProductImage(
                 else -> {
                     Icon(
                         imageVector = Icons.Outlined.Image,
-                        contentDescription = contentDescription,
-                        tint = MediumGrayText
+                        contentDescription = "Placeholder",
+                        tint = MediumGrayText,
                     )
+
                 }
             }
         }

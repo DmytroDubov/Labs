@@ -21,6 +21,8 @@ import com.org.labss.ui.vm.ProductEvent
 import com.org.labss.ui.vm.ProductUiState
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import com.org.labss.ui.theme.BlackPrimary
 import com.org.labss.ui.theme.LightGraySurface
@@ -31,86 +33,116 @@ fun HomeScreen(
     onEvent: (ProductEvent) -> Unit,
     onNavigateToSearch: (String, String?) -> Unit
 ) {
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp),
-        contentPadding = PaddingValues(
-            top = 16.dp,
-            bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()+6.dp
-        )
-
+            .safeDrawingPadding(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        item {
-            CustomSearchBar(
-                value = state.query,
-                onValueChange = { onEvent(ProductEvent.OnSearchQueryChanged(it)) },
-                readOnly = false,
-                onClick = { onNavigateToSearch(state.query, state.selectedCategory) },
-                onSearchAction = { query ->
-                    val effectiveQuery = query.ifBlank {
-                        state.popularProducts.firstOrNull()?.title
-                            ?: state.products.firstOrNull()?.title
-                            ?: "Капучино"
-                    }
-                    onEvent(ProductEvent.OnSearchQueryChanged(effectiveQuery))
-                    onEvent(ProductEvent.OnSearchSubmitted(effectiveQuery, state.products.size))
-                    onNavigateToSearch(effectiveQuery, state.selectedCategory)
+        CustomSearchBar(
+            value = state.query,
+            onValueChange = { onEvent(ProductEvent.OnSearchQueryChanged(it)) },
+            readOnly = false,
+            onClick = { onNavigateToSearch(state.query, state.selectedCategory) },
+            onSearchAction = { query ->
+                val effectiveQuery = query.ifBlank {
+                    state.popularProducts.firstOrNull()?.title
+                        ?: state.products.firstOrNull()?.title
+                        ?: "Капучино"
                 }
-            )
-        }
+                onEvent(ProductEvent.OnSearchQueryChanged(effectiveQuery))
+                onEvent(ProductEvent.OnSearchSubmitted(effectiveQuery, state.products.size))
+                onNavigateToSearch(effectiveQuery, state.selectedCategory)
+            }
+        )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp),
+            contentPadding = PaddingValues(
+                top = 16.dp,
+                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()+6.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
 
-        item {
-            Text(text = "Our last giveaway", color = BlackPrimary,style = MaterialTheme.typography.titleLarge)
-            Spacer(modifier = Modifier.height(12.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .background(LightGraySurface, RoundedCornerShape(16.dp))
-            )
-        }
 
-        item {
-            Text(text = "Popular categories", color = BlackPrimary,style = MaterialTheme.typography.titleLarge)
-            Spacer(modifier = Modifier.height(12.dp))
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(state.categories.take(4)) { category ->
-                    CategoryItem(title = category) {
-                        onEvent(ProductEvent.OnCategorySelected(category))
-                        onNavigateToSearch("", category)
+        ) {
+
+            item{
+                Text(
+                    text = "Last gateway",
+                    color = BlackPrimary,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.9f)
+                        .background(LightGraySurface, RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(16.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                    val bannerImageUrl = state.popularProducts.firstOrNull()?.imageUrl ?: ""
+
+                    ProductImage(
+                        imageUrl = bannerImageUrl,
+                        modifier = Modifier
+                            .height(120.dp)
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp)
+                    )
+
+                }
+            }
+
+
+            item {
+                Text(
+                    text = "Popular categories",
+                    color = BlackPrimary,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    items(state.categoryObjects.take(4)) { category ->
+                        CategoryItem(
+                            category = category
+                        ) {
+                            onEvent(ProductEvent.OnCategorySelected(category.name))
+                            onNavigateToSearch("", category.name)
+                        }
                     }
                 }
             }
-        }
 
-        item {
-            Text(text = "Popular products", color = BlackPrimary,style = MaterialTheme.typography.titleLarge)
-            Spacer(modifier = Modifier.height(12.dp))
+            item {
+                Text(text = "Popular products", color = BlackPrimary,style = MaterialTheme.typography.titleLarge)
+                Spacer(modifier = Modifier.height(12.dp))
 
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                val rows = state.popularProducts.chunked(2)
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    val rows = state.popularProducts.chunked(2)
 
-                rows.forEach { rowItems ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        rowItems.forEach { product ->
-                            Box(modifier = Modifier.weight(1f)) {
-                                ProductGridCard(
-                                    product = product,
-                                    isFavorite = product.isFavorite,
-                                    onToggleFavorite = { onEvent(ProductEvent.OnToggleFavorite(product.id)) },
-                                    onAdd = { onEvent(ProductEvent.OnAddProductClicked(product.id)) },
-                                    onIncrease = { onEvent(ProductEvent.OnIncreaseQuantity(product.id)) },
-                                    onDecrease = { onEvent(ProductEvent.OnDecreaseQuantity(product.id)) }
-                                )
+                    rows.forEach { rowItems ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            rowItems.forEach { product ->
+                                Box(modifier = Modifier.weight(1f)) {
+                                    ProductGridCard(
+                                        product = product,
+                                        isFavorite = product.isFavorite,
+                                        onToggleFavorite = { onEvent(ProductEvent.OnToggleFavorite(product.id)) }
+                                    )
+                                }
                             }
-                        }
-                        if (rowItems.size == 1) {
-                            Spacer(modifier = Modifier.weight(1f))
+                            if (rowItems.size == 1) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
                         }
                     }
                 }
@@ -123,58 +155,59 @@ fun HomeScreen(
 private fun ProductGridCard(
     product: Product,
     isFavorite: Boolean,
-    onToggleFavorite: () -> Unit,
-    onAdd: () -> Unit,
-    onIncrease: () -> Unit,
-    onDecrease: () -> Unit
+    onToggleFavorite: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(245.dp)
-            .background(LightGraySurface, RoundedCornerShape(16.dp))
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        ProductImage(
-            imageUrl = product.imageUrl,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
-        )
-
-        Text(
-            text = product.title,
-            color = BlackPrimary,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.height(40.dp)
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .aspectRatio(1f)
+                .background(LightGraySurface, RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(16.dp)),
+            contentAlignment = Alignment.Center
         ) {
-            Text(text = "$${product.price}", color = BlackPrimary)
-
+            ProductImage(
+                imageUrl = product.imageUrl,
+                modifier = Modifier.fillMaxSize()
+            )
         }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
-        DynamicAddButton(
-            quantity = product.quantity,
-            onAdd = onAdd,
-            onIncrease = onIncrease,
-            onDecrease = onDecrease
-        )
-        FavoriteIcon(
-            isFavorite = isFavorite,
-            onClick = onToggleFavorite
-        )
-    }
-}
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = product.title,
+                    color = BlackPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium
+                )
 
+                Text(
+                    text = "$${product.price}",
+                    color = BlackPrimary,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            FavoriteIcon(
+                isFavorite = isFavorite,
+                onClick = onToggleFavorite
+            )
+        }
+    }
 }
